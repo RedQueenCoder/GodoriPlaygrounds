@@ -34,11 +34,23 @@ enum CardSuit {
 //
 // Also added some whitespace after the ':', convential style seems to be going one-space-after-colons.
 // It also makes it easier for me to read.  whitespaceischeapweshouldbeusingitmoreoften.
-struct Card {
+struct Card : CustomStringConvertible {
     let suit: CardSuit
     let type: CardType
-}
+    
+    // You can get the name of an enum case, making it easy to synthesize a name for the card,
+    // handy for generating appropriate image names, for instance.
+    // This way you don't have to manually create (and maintain!) All The Strings
+    // (a.k.a. the cartesian product of suit and type.)
+    var name: String {
+        return ("\(String(describing: suit))-\(String(describing: type))")
+    }
 
+    // Make the debugging printout a little prettier.
+    var description: String {
+        return name
+    }
+}
 
 let deck:[String:Card] = ["JanBright": Card(suit: .january, type: .bright),
                           "JanRibbon": Card(suit: .january, type: .ribbon),
@@ -90,5 +102,5 @@ let deck:[String:Card] = ["JanBright": Card(suit: .january, type: .bright),
                           "DecJunk2": Card(suit: .december, type: .junk),]
 
 for card in deck {
-    print("got card \(card)")
+    print("got card \(card.value)")
 }
