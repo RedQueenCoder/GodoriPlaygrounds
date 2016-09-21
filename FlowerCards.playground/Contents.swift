@@ -2,14 +2,14 @@
 
 import UIKit
 
-enum CardType {
+enum CardType: Int {
     case bright
     case ribbon
     case animal
     case junk
 }
 
-enum CardSuit {
+enum CardSuit: Int {
     case january
     case february
     case march
@@ -52,60 +52,36 @@ struct Card : CustomStringConvertible {
     }
 }
 
-// Removed the hard-coded name string - it's derivable from the Card directly.
-// Turned the deck in to an array.  Look a deck of cards, and there's a definite
-// order to the cards.  The deck will need to be shuffled in the future, so starting
-// out with an array prevents having to extract the arrayness out of another
-// data structure.
+// This is debatable whether it's an improvement.
+//
+// Pros:
+//    Don't have to manually create (and maintain!) the deck.  It can be prone to copy-paste errors.
+//    Tracks any changes to the enums (say if you were making a Lizard-Spock update)
+//
+// Cons:
+//    Kind of gross to saddle CardSuit / CardType with being integers just to automate the deck creation
+//    Don't like the forced unwrapping. It's safe (becaue we spin through known values), but the bang-operator
+//       always makes me nervous
+let deck: [Card] = {
+    var deck = [Card]()
+    for rawSuit in CardSuit.january.rawValue ... CardSuit.december.rawValue {
+        let suit = CardSuit(rawValue: rawSuit)!
+        
+        for rawType in CardType.bright.rawValue ... CardType.junk.rawValue {
+            let type = CardType(rawValue: rawType)!
+            
+            let card = Card(suit: suit, type: type)
+            deck.append(card)
+        }
+        
+        // and add an additional junk card
+        let junk2 = Card(suit: suit, type: .junk)
+        deck.append(junk2)
+    }
+    
+    return deck
+}()
 
-let deck:[Card] = [
-    Card(suit: .january, type: .ribbon),
-    Card(suit: .january, type: .junk),
-    Card(suit: .january, type: .junk),
-    Card(suit: .february, type: .animal),
-    Card(suit: .february, type: .ribbon),
-    Card(suit: .february, type: .junk),
-    Card(suit: .february, type: .junk),
-    Card(suit: .march, type: .bright),
-    Card(suit: .march, type: .ribbon),
-    Card(suit: .march, type: .junk),
-    Card(suit: .march, type: .junk),
-    Card(suit: .april, type: .animal),
-    Card(suit: .april, type: .ribbon),
-    Card(suit: .april, type: .junk),
-    Card(suit: .april, type: .junk),
-    Card(suit: .may, type: .animal),
-    Card(suit: .may, type: .ribbon),
-    Card(suit: .may, type: .junk),
-    Card(suit: .may, type: .junk),
-    Card(suit: .june, type: .animal),
-    Card(suit: .june, type:.ribbon),
-    Card(suit: .june, type: .junk),
-    Card(suit: .june, type: .junk),
-    Card(suit: .july, type: .animal),
-    Card(suit: .july, type: .ribbon),
-    Card(suit: .july, type: .junk),
-    Card(suit: .july, type: .junk),
-    Card(suit: .august, type: .bright),
-    Card(suit: .august, type: .animal),
-    Card(suit: .august, type: .junk),
-    Card(suit: .august, type: .junk),
-    Card(suit: .september, type: .animal),
-    Card(suit: .september, type: .ribbon),
-    Card(suit: .september, type: .junk),
-    Card(suit: .september, type: .junk),
-    Card(suit: .october, type: .animal),
-    Card(suit: .october, type: .ribbon),
-    Card(suit: .october, type: .junk),
-    Card(suit: .october, type: .junk),
-    Card(suit: .november, type: .bright),
-    Card(suit: .november, type: .animal),
-    Card(suit: .november, type: .ribbon),
-    Card(suit: .november, type: .junk),
-    Card(suit: .december, type:.bright),
-    Card(suit: .december, type: .junk),
-    Card(suit: .december, type: .junk),
-    Card(suit: .december, type: .junk)]
 
 for card in deck {
     print("got card \(card)")
