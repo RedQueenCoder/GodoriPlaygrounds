@@ -24,15 +24,21 @@ enum CardSuit {
     case december
 }
 
+// Renamed properties from 'cardSuit' and 'cardType' to 'suit' and 'type'
+// Not only shorter :-), but also reduces some muffin-man effect when accessing the properties:
+//     if card.cardSuit == ...     let type = card.cardType.
+// You're dealing with a card, so it's obvious that the type/suit you're talking about relate to the card.
+//
+// Deleted the initializer because you get one automatically where the property names match the argument names,
+// so you get  init(suit:type:) for free.
+//
+// Also added some whitespace after the ':', convential style seems to be going one-space-after-colons.
+// It also makes it easier for me to read.  whitespaceischeapweshouldbeusingitmoreoften.
 struct Card {
-    let cardSuit:CardSuit
-    let cardType:CardType
-    
-    init(suit:CardSuit, type:CardType) {
-        cardSuit = suit
-        cardType = type
-    }
+    let suit: CardSuit
+    let type: CardType
 }
+
 
 let deck:[String:Card] = ["JanBright": Card(suit: .january, type: .bright),
                           "JanRibbon": Card(suit: .january, type: .ribbon),
