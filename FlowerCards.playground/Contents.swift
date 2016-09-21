@@ -51,23 +51,52 @@ struct Card : CustomStringConvertible {
         return name
     }
     
+    // It's dangerous to rely on "by-eye" for correctness of things like card suit/type combinations,
+    // so here's a mechanical way of verifying that a suit/type combination is valid.
+    static func isValidCombination(_ suit: CardSuit, _ type: CardType) -> Bool {
+        let validTypes: [CardSuit: [CardType]] = [
+            .january: [.bright, .ribbon, .junk],
+            .february: [.ribbon, .animal, .junk],
+            .march: [.bright, .ribbon, .junk],
+            .april: [.ribbon, .animal, .junk],
+            .may: [.ribbon, .animal, .junk],
+            .june: [.ribbon, .animal, .junk],
+            .july: [.ribbon, .animal, .junk],
+            .august: [.bright, .animal, .junk],
+            .september: [.ribbon, .animal, .junk],
+            .october: [.ribbon, .animal, .junk],
+            .november: [.bright, .ribbon, .animal, .junk],
+            .december: [.bright, .junk] // TODO - figure out double-junk - is it just a junk card, or is a special kind?
+        ]
+        
+        return validTypes[suit]?.contains(type) ?? false
+    }
     
     static let unshuffledDeck: [Card] = {
         var deck = [Card]()
+        
+        // Walk through every combination of suit/type, and filter out any invalid combinations.
         for rawSuit in CardSuit.january.rawValue ... CardSuit.december.rawValue {
             let suit = CardSuit(rawValue: rawSuit)!
             
             for rawType in CardType.bright.rawValue ... CardType.junk.rawValue {
                 let type = CardType(rawValue: rawType)!
-                
                 let card = Card(suit: suit, type: type)
-                deck.append(card)
+                
+                // Filter out any invalid card/type combinations.
+                if isValidCombination(suit, type) {
+                    deck.append(card)
+                }
             }
             
             // and add an additional junk card
             let junk2 = Card(suit: suit, type: .junk)
             deck.append(junk2)
         }
+        
+        // And december has yet another junk.
+        let doubleJunk = Card(suit: .december, type: .junk)
+        deck.append(doubleJunk)
         
         return deck
     }()
