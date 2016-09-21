@@ -51,6 +51,12 @@ struct Card : CustomStringConvertible {
         return name
     }
     
+    init(suit: CardSuit, type: CardType) {
+        assert(Card.isValidCombination(suit, type))
+        self.suit = suit
+        self.type = type
+    }
+    
     // It's dangerous to rely on "by-eye" for correctness of things like card suit/type combinations,
     // so here's a mechanical way of verifying that a suit/type combination is valid.
     static func isValidCombination(_ suit: CardSuit, _ type: CardType) -> Bool {
@@ -81,10 +87,10 @@ struct Card : CustomStringConvertible {
             
             for rawType in CardType.bright.rawValue ... CardType.junk.rawValue {
                 let type = CardType(rawValue: rawType)!
-                let card = Card(suit: suit, type: type)
                 
                 // Filter out any invalid card/type combinations.
                 if isValidCombination(suit, type) {
+                    let card = Card(suit: suit, type: type)
                     deck.append(card)
                 }
             }
