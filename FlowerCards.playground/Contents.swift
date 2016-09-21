@@ -50,39 +50,29 @@ struct Card : CustomStringConvertible {
     var description: String {
         return name
     }
-}
-
-// This is debatable whether it's an improvement.
-//
-// Pros:
-//    Don't have to manually create (and maintain!) the deck.  It can be prone to copy-paste errors.
-//    Tracks any changes to the enums (say if you were making a Lizard-Spock update)
-//
-// Cons:
-//    Kind of gross to saddle CardSuit / CardType with being integers just to automate the deck creation
-//    Don't like the forced unwrapping. It's safe (becaue we spin through known values), but the bang-operator
-//       always makes me nervous
-let deck: [Card] = {
-    var deck = [Card]()
-    for rawSuit in CardSuit.january.rawValue ... CardSuit.december.rawValue {
-        let suit = CardSuit(rawValue: rawSuit)!
-        
-        for rawType in CardType.bright.rawValue ... CardType.junk.rawValue {
-            let type = CardType(rawValue: rawType)!
+    
+    
+    static let unshuffledDeck: [Card] = {
+        var deck = [Card]()
+        for rawSuit in CardSuit.january.rawValue ... CardSuit.december.rawValue {
+            let suit = CardSuit(rawValue: rawSuit)!
             
-            let card = Card(suit: suit, type: type)
-            deck.append(card)
+            for rawType in CardType.bright.rawValue ... CardType.junk.rawValue {
+                let type = CardType(rawValue: rawType)!
+                
+                let card = Card(suit: suit, type: type)
+                deck.append(card)
+            }
+            
+            // and add an additional junk card
+            let junk2 = Card(suit: suit, type: .junk)
+            deck.append(junk2)
         }
         
-        // and add an additional junk card
-        let junk2 = Card(suit: suit, type: .junk)
-        deck.append(junk2)
-    }
-    
-    return deck
-}()
+        return deck
+    }()
+}
 
-
-for card in deck {
+for card in Card.unshuffledDeck {
     print("got card \(card)")
 }
